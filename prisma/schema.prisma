@@ -34,67 +34,66 @@ enum Role {
 
 // Models
 model User {
-  id              String   @id @default(uuid())
+  id              String     @id @default(uuid())
   name            String
-  email           String   @unique
+  email           String     @unique
   hashedPassword  String
-  status          PlanStatus
-  role            Role
-  isEmailVerified Boolean
-  blocked         Boolean
+  status          PlanStatus @default(PENDING)
+  role            Role       @default(USER)
+  isEmailVerified Boolean    @default(false)
+  blocked         Boolean    @default(false)
   appPlanId       String
-  appPlan         AppPlan  @relation(fields: [appPlanId], references: [id])
+  appPlan         AppPlan    @relation(fields: [appPlanId], references: [id])
 
-  plans           Plan[]   @relation("UserPlans")
-  clients         Client[] @relation("UserClients")
+  plans   Plan[]   @relation("UserPlans")
+  clients Client[] @relation("UserClients")
 }
 
 model Plan {
-  id       String    @id @default(uuid())
-  name     String    @unique
-  price    Float
+  id        String    @id @default(uuid())
+  name      String    @unique
+  price     Float
   frequency Frequency
-  userId   String
-  user     User      @relation("UserPlans", fields: [userId], references: [id])
+  userId    String
+  user      User      @relation("UserPlans", fields: [userId], references: [id])
 
-  clients       Client[]
-  transactions  Transaction[]
+  clients      Client[]
+  transactions Transaction[]
 }
 
 model Client {
-  id       String      @id @default(uuid())
-  name     String
-  email    String      @unique
-  status   ClientStatus
-  planId   String
-  plan     Plan        @relation(fields: [planId], references: [id])
-  userId   String
-  user     User        @relation("UserClients", fields: [userId], references: [id])
+  id     String       @id @default(uuid())
+  name   String
+  email  String       @unique
+  status ClientStatus
+  planId String
+  plan   Plan         @relation(fields: [planId], references: [id])
+  userId String
+  user   User         @relation("UserClients", fields: [userId], references: [id])
 
   transactions Transaction[]
   scheduling   Scheduling[]
 }
 
 model Transaction {
-  id       String  @id @default(uuid())
+  id       String @id @default(uuid())
   value    Float
   planId   String
-  plan     Plan    @relation(fields: [planId], references: [id])
+  plan     Plan   @relation(fields: [planId], references: [id])
   clientId String
-  client   Client  @relation(fields: [clientId], references: [id])
+  client   Client @relation(fields: [clientId], references: [id])
 }
 
 model Scheduling {
-  id       String    @id @default(uuid())
+  id        String    @id @default(uuid())
   frequency Frequency
-  clientId String
-  client   Client    @relation(fields: [clientId], references: [id])
+  clientId  String
+  client    Client    @relation(fields: [clientId], references: [id])
 }
 
 model AppPlan {
-  id    String  @id @default(uuid())
+  id    String @id @default(uuid())
   name  String
   price Float
   users User[]
 }
-
