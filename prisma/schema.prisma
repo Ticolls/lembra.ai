@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum Frequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  ANNUAL
+}
+
+enum ClientStatus {
+  ACTIVE
+  INACTIVE
+  CANCELED
+}
+
+enum PlanStatus {
+  PAID
+  PENDING
+  CANCELED
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+// Models
+model User {
+  id              String   @id @default(uuid())
+  name            String
+  email           String   @unique
+  hashedPassword  String
+  status          PlanStatus
+  role            Role
+  isEmailVerified Boolean
+  blocked         Boolean
+  appPlanId       String
+  appPlan         AppPlan  @relation(fields: [appPlanId], references: [id])
+
+  plans           Plan[]   @relation("UserPlans")
+  clients         Client[] @relation("UserClients")
+}
+
+model Plan {
+  id       String    @id @default(uuid())
+  name     String    @unique
+  price    Float
+  frequency Frequency
+  userId   String
+  user     User      @relation("UserPlans", fields: [userId], references: [id])
+
+  clients       Client[]
+  transactions  Transaction[]
+}
+
+model Client {
+  id       String      @id @default(uuid())
+  name     String
+  email    String      @unique
+  status   ClientStatus
+  planId   String
+  plan     Plan        @relation(fields: [planId], references: [id])
+  userId   String
+  user     User        @relation("UserClients", fields: [userId], references: [id])
+
+  transactions Transaction[]
+  scheduling   Scheduling[]
+}
+
+model Transaction {
+  id       String  @id @default(uuid())
+  value    Float
+  planId   String
+  plan     Plan    @relation(fields: [planId], references: [id])
+  clientId String
+  client   Client  @relation(fields: [clientId], references: [id])
+}
+
+model Scheduling {
+  id       String    @id @default(uuid())
+  frequency Frequency
+  clientId String
+  client   Client    @relation(fields: [clientId], references: [id])
+}
+
+model AppPlan {
+  id    String  @id @default(uuid())
+  name  String
+  price Float
+  users User[]
+}
+
