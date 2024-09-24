@@ -17,6 +17,7 @@ async function main() {
             email: 'admin@admin.com',
             hashedPassword: await bcrypt.hash(process.env.ADMIN_PASSWORD || "12345678", Number(process.env.SALT)),
             status: 'PAID',
+            role: "ADMIN", 
             appPlanId: appPlan.id
         },
     });
