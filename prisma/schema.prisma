@@ -32,6 +32,12 @@ enum Role {
   ADMIN
 }
 
+enum JobStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
 // Models
 model User {
   id              String     @id @default(uuid())
@@ -82,6 +88,8 @@ model Transaction {
   plan     Plan   @relation(fields: [planId], references: [id])
   clientId String
   client   Client @relation(fields: [clientId], references: [id])
+
+  Job Job[]
 }
 
 model Scheduling {
@@ -89,6 +97,20 @@ model Scheduling {
   frequency Frequency
   clientId  String
   client    Client    @relation(fields: [clientId], references: [id])
+  nextRunAt DateTime // Próxima vez que o agendamento será executado
+  lastRunAt DateTime? // Última vez que o agendamento foi executado
+  status    JobStatus // Status do agendamento
+  jobId     String? // ID do Job no Bull/Redis para facilitar o controle
+}
+
+model Job {
+  id            String       @id @default(uuid())
+  scheduledAt   DateTime     @default(now()) // Data de agendamento
+  executedAt    DateTime? // Data de execução (nula se não executada ainda)
+  status        JobStatus // Pendente, completada, falha
+  errorMessage  String? // Em caso de falha, salvar a mensagem de erro
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+  transactionId String? // Transação gerada pelo Job, se houver
 }
 
 model AppPlan {
