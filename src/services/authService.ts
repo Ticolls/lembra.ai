@@ -51,7 +51,7 @@ export const authService = {
                 throw new AppError("Credenciais inválidas.", 400)
             }
 
-            const token = generateToken(user.email, user.role)
+            const token = generateToken(user.id, user.email, user.role)
             return token
         } catch (e) {
             console.log(e)

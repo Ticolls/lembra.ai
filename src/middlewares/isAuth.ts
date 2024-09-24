@@ -2,8 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken"
 
 interface User {
-    email: string,
-    role: string
+  id: string,
+  email: string,
+  role: string
 }
 
 export function isAuth(req: Request, res: Response, next: NextFunction) {
