@@ -1,17 +1,19 @@
 import { Request, Response } from "express";
 import { validateOrReject, ValidationError } from "class-validator";
-import { userService } from "../services/userService";
+import { planService } from "../services/planService";
 import { AppError } from "../errors/AppError";
-import { CreateUserDto } from "../dtos/user/CreateUserDto";
-import { UpdateUserDto } from "../dtos/user/UpdateUserDto";
+import { CreatePlanDto } from "../dtos/plan/CreatePlanDto";
+import { UpdatePlanDto } from "../dtos/plan/UpdatePlanDto";
 
-export const userController = {
+export const planController = {
     async create(req: Request, res: Response) {
         try {
-            const createUserDto = new CreateUserDto(req.body)
-            await validateOrReject(createUserDto)
-            const result = await userService.create(createUserDto)
-            res.status(200).json({message: "Usuário criado com sucesso!", data: result})
+            const userId = req.user?.id
+            if (!userId) return res.status(401).json({message: "Você não está autenticado."})
+            const createPlanDto = new CreatePlanDto(req.body)
+            await validateOrReject(createPlanDto)
+            const result = await planService.create(userId, createPlanDto)
+            res.status(200).json({message: "Plano criado com sucesso!", data: result})
         } catch (e: any) {
             console.log(e)
             if (e instanceof AppError) {
@@ -28,9 +30,12 @@ export const userController = {
 
     async list(req: Request, res: Response) {
         try {
-            const users = await userService.list()
+            const userId = req.user?.id
+            if (!userId) return res.status(401).json({message: "Você não está autenticado."})
+
+            const plans = await planService.list(userId)
             
-            res.status(200).json({message: "Listagem de usuários feita com sucesso!", users})
+            res.status(200).json({message: "Listagem de planos feita com sucesso!", plans})
         } catch (e: any) {
             if (e instanceof AppError) {
                 return res.status(e.code).json({error: e.message})
@@ -42,10 +47,13 @@ export const userController = {
 
     async getById(req: Request, res: Response) {
         try {
-            const id = req.params["id"]
-            const user = await userService.getById(id)
+            const userId = req.user?.id
+            if (!userId) return res.status(401).json({message: "Você não está autenticado."})
 
-            res.status(200).json(user)
+            const id = req.params["id"]
+            const plan = await planService.getById(userId, id)
+
+            res.status(200).json({message: "Plano recuperado com sucesso!", plan})
         } catch (e: any) {
             if (e instanceof AppError) {
                 return res.status(e.code).json({error: e.message})
@@ -57,12 +65,15 @@ export const userController = {
 
     async update(req: Request, res: Response) {
         try {
+            const userId = req.user?.id
+            if (!userId) return res.status(401).json({message: "Você não está autenticado."})
+
             const id = req.params["id"]
-            const updateUserDto = new UpdateUserDto(req.body)
-            await validateOrReject(updateUserDto)
-            const user = await userService.update(id, updateUserDto)
+            const updatePlanDto = new UpdatePlanDto(req.body)
+            await validateOrReject(updatePlanDto)
+            const plan = await planService.update(userId, id, updatePlanDto)
             
-            res.status(200).json({message: "Usuário atualizado com sucesso!", user})
+            res.status(200).json({message: "Plano atualizado com sucesso!", plan})
         } catch (e: any) {
             if (e instanceof AppError) {
                 return res.status(e.code).json({error: e.message})
@@ -78,10 +89,13 @@ export const userController = {
 
     async delete(req: Request, res: Response) {
         try {
-            const id = req.params["id"]
-            const user = await userService.delete(id)
+            const userId = req.user?.id
+            if (!userId) return res.status(401).json({message: "Você não está autenticado."})
 
-            res.status(200).json({message: "Usuário deletado com sucesso!", user})
+            const id = req.params["id"]
+            const plan = await planService.delete(userId, id)
+
+            res.status(200).json({message: "Plano deletado com sucesso!", plan})
         } catch (e:any) {
             if (e instanceof AppError) {
                 return res.status(e.code).json({error: e.message})
