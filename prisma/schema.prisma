@@ -15,13 +15,13 @@ enum Frequency {
   ANNUAL
 }
 
-enum ClientStatus {
+enum UserStatus {
   ACTIVE
   INACTIVE
   CANCELED
 }
 
-enum PlanStatus {
+enum ClientStatus {
   PAID
   PENDING
   CANCELED
@@ -38,7 +38,7 @@ model User {
   name            String
   email           String     @unique
   hashedPassword  String
-  status          PlanStatus @default(PENDING)
+  status          UserStatus @default(INACTIVE)
   role            Role       @default(USER)
   isEmailVerified Boolean    @default(false)
   blocked         Boolean    @default(false)
@@ -65,7 +65,7 @@ model Client {
   id     String       @id @default(uuid())
   name   String
   email  String       @unique
-  status ClientStatus
+  status ClientStatus @default(PENDING)
   planId String
   plan   Plan         @relation(fields: [planId], references: [id])
   userId String

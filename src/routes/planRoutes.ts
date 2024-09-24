@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { planController } from "../controllers/planController";
 import { isAuth } from "../middlewares/isAuth";
-import { isAdmin } from "../middlewares/isAdmin";
 
 const planRoutes = Router()
 

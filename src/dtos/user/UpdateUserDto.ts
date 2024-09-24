@@ -1,4 +1,4 @@
-import { PlanStatus } from "@prisma/client"
+import { UserStatus } from "@prisma/client"
 import { IsNotEmpty, IsString, IsEmail, MinLength, IsOptional } from "class-validator"
 
 export class UpdateUserDto {
@@ -28,7 +28,7 @@ export class UpdateUserDto {
     @IsNotEmpty()
     @IsString()
     @IsOptional()
-    status: PlanStatus
+    status: UserStatus
 
     @IsNotEmpty()
     @IsString()

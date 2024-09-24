@@ -1,4 +1,3 @@
-import { PlanStatus } from "@prisma/client";
 import { prisma } from "../configs/database";
 import { CreateUserDto } from "../dtos/user/CreateUserDto";
 import { UpdateUserDto } from "../dtos/user/UpdateUserDto";

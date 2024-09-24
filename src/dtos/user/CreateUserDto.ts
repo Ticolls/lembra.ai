@@ -1,4 +1,4 @@
-import { PlanStatus } from "@prisma/client"
+import { UserStatus } from "@prisma/client"
 import { IsNotEmpty, IsString, IsEmail, MinLength, IsOptional, IsBoolean } from "class-validator"
 
 export class CreateUserDto {
@@ -24,7 +24,7 @@ export class CreateUserDto {
     @IsNotEmpty()
     @IsString()
     @IsOptional()
-    status: PlanStatus
+    status: UserStatus
 
     @IsNotEmpty()
     @IsBoolean()
