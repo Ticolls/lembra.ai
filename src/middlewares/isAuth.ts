@@ -19,6 +19,6 @@ export function isAuth(req: Request, res: Response, next: NextFunction) {
     next()
   } catch (e) {
     console.error('Erro na verificação do token:', e);
-    return res.sendStatus(403); 
+    return res.status(403).json({message: "você não está autenticado."}); 
   }
 }

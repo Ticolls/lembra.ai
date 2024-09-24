@@ -22,8 +22,10 @@ export const authService = {
 
             const createdUser = prisma.user.create({
                 data: {
-                    ...registerUser,
-                    hashedPassword
+                    name: registerUser.name,
+                    email: registerUser.email,
+                    hashedPassword,
+                    appPlanId: registerUser.appPlanId
                 }
             })
     
@@ -32,7 +34,6 @@ export const authService = {
             console.log(e)
             throw e
         }
-        
     },
 
     async login(loginUser: LoginDto) {
